@@ -126,7 +126,10 @@ class PhpDocblockChecker implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
 
         // Disable exec output logging, as we don't want the XML report in the log:
         $this->phpci->logExecOutput(false);
-
+        $this->phpci->log("Docblock cmd: ".sprintf($cmd,
+                $path,
+                $ignore,
+                $add));
         // Run checker:
         $this->phpci->executeCommand(
             $cmd,
@@ -141,7 +144,7 @@ class PhpDocblockChecker implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
         $output = json_decode($this->phpci->getLastOutput(), true);
         $errors = count($output);
         $success = true;
-
+        $this->phpci->log("Docblock errors: ".$errors);
         $this->build->storeMeta('phpdoccheck-warnings', $errors);
         $this->reportErrors($output);
 

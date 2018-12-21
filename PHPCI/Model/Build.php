@@ -110,6 +110,11 @@ class Build extends BuildBase
         }
 
         // Try phpci.yml first:
+        if (empty($build_config) && is_file($buildPath . '/phpci.local.yml')) {
+            $build_config = file_get_contents($buildPath . '/phpci.local.yml');
+        }
+
+        // Try phpci.yml first:
         if (empty($build_config) && is_file($buildPath . '/phpci.yml')) {
             $build_config = file_get_contents($buildPath . '/phpci.yml');
         }

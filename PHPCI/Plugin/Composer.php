@@ -98,6 +98,7 @@ class Composer implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
         if (IS_WIN) {
             $cmd = 'php ';
         }
+        $cmd = 'php -d memory_limit=-1 ';
 
         $cmd .= $composerLocation . ' --no-ansi --no-interaction ';
 
@@ -117,7 +118,7 @@ class Composer implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
         }
 
         $cmd .= ' --working-dir="%s" %s';
-
+        $this->phpci->log('Running: '.$cmd);
         return $this->phpci->executeCommand($cmd, $this->directory, $this->action);
     }
 }

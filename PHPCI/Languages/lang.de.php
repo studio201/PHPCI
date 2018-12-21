@@ -178,7 +178,10 @@ generiert. Um es zu verwenden, fügen Sie einfach den folgenden Public Key im Ab
     'phpcs_errors' => 'PHPCS Errors',
     'phplint_errors' => 'Lint Errors',
     'phpunit_errors' => 'PHPUnit Errors',
+    'phptal_warnings' => 'PHPTal Warnings',
+    'phptal_errors' => 'PHPTal Erros',
     'phpdoccheck_warnings' => 'Fehlende Docblocks',
+    'technical_debt_warnings' => 'Technische Schulden Warnings',
     'issues' => 'Probleme',
 
     'codeception' => 'Codeception',
@@ -424,6 +427,14 @@ generiert. Um es zu verwenden, fügen Sie einfach den folgenden Public Key im Ab
     'normal' => 'Normal',
     'low' => 'Niedrig',
 
+    'php_docblock_checker' => 'Docblock Checker',
+    'php_code_sniffer' => 'Code Sniffer',
+    'php_mess_detector' => 'Mess Detector',
+
+   
+    'code_coverage' => "Code Coverage",
+    'phpdoc' => "PHP Doc",
+    
     // Plugins that generate errors:
     'php_mess_detector' => 'PHP Mess Detector',
     'php_code_sniffer' => 'PHP Code Sniffer',

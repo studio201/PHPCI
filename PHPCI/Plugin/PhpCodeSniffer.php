@@ -153,6 +153,17 @@ class PhpCodeSniffer implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
         $this->phpci->logExecOutput(false);
 
         $cmd = $phpcs . ' --report=json %s %s %s %s %s "%s"';
+        $this->phpci->log(
+            sprintf(
+                $cmd,
+                $standard,
+                $suffixes,
+                $ignore,
+                $this->tab_width,
+                $this->encoding,
+                $this->phpci->buildPath.$this->path
+            )
+        );
         $this->phpci->executeCommand(
             $cmd,
             $standard,
