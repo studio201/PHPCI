@@ -90,6 +90,9 @@ class Shell implements \PHPCI\Plugin
 
             if (!$this->phpci->executeCommand($command)) {
                 $success = false;
+                $this->phpci->log("Fehlgeschlagen: ".$command);
+            } else {
+                $this->phpci->log("Erfolgreich: ".$command);
             }
         }
 

@@ -36,9 +36,10 @@ class CopyBuild implements \PHPCI\Plugin
     public function __construct(Builder $phpci, Build $build, array $options = array())
     {
         $path            = $phpci->buildPath;
+        if(!isset($options['directory']))$options['directory'] = "../../../public/lastbuilds/%PROJECT%/";
         $this->phpci     = $phpci;
         $this->build     = $build;
-        $this->directory = isset($options['directory']) ? $options['directory'] : $path;
+        $this->directory = isset($options['directory']) ? $this->phpci->interpolate($options['directory']) : $path;
         $this->wipe      = isset($options['wipe']) ?  (bool)$options['wipe'] : false;
         $this->ignore    = isset($options['respect_ignore']) ?  (bool)$options['respect_ignore'] : false;
     }
@@ -55,8 +56,7 @@ class CopyBuild implements \PHPCI\Plugin
         }
 
         $this->wipeExistingDirectory();
-
-        $cmd = 'mkdir -p "%s" && cp -R "%s" "%s"';
+        $cmd = 'mkdir -p "%s" && cp -r %s* %s';
         if (IS_WIN) {
             $cmd = 'mkdir -p "%s" && xcopy /E "%s" "%s"';
         }
