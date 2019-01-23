@@ -70,8 +70,8 @@ class Composer implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
             $php = $buildSettings['php'];
             $this->phpPath = $php['path'];
         }
-        
-        
+
+
         if (array_key_exists('directory', $options)) {
             $this->directory = $path.DIRECTORY_SEPARATOR.$options['directory'];
         }
@@ -135,7 +135,7 @@ class Composer implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
         }
 
         $cmd .= ' --working-dir="%s" %s';
-        $this->phpci->log('Running: '.$cmd);
+        $this->phpci->log('Running: '.sprintf($cmd, $this->directory, $this->action));
 
         return $this->phpci->executeCommand($cmd, $this->directory, $this->action);
     }
