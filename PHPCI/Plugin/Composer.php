@@ -65,6 +65,13 @@ class Composer implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
         $this->nodev = false;
         $this->phpPath = null;
 
+        $buildSettings = $phpci->getConfig('build_settings');
+        if (isset($buildSettings['php'])) {
+            $php = $buildSettings['php'];
+            $this->phpPath = $php['path'];
+        }
+        
+        
         if (array_key_exists('directory', $options)) {
             $this->directory = $path.DIRECTORY_SEPARATOR.$options['directory'];
         }
