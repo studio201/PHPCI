@@ -24,6 +24,7 @@ class Composer implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
     protected $directory;
     protected $action;
     protected $preferDist;
+    protected $preferSource;
     protected $phpci;
     protected $build;
     protected $nodev;
