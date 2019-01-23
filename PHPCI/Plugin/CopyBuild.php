@@ -49,6 +49,7 @@ class CopyBuild implements \PHPCI\Plugin
     */
     public function execute()
     {
+        $this->phpci->log('CopyBuild execute()');
         $build = $this->phpci->buildPath;
 
         if ($this->directory == $build) {
@@ -60,11 +61,11 @@ class CopyBuild implements \PHPCI\Plugin
         if (IS_WIN) {
             $cmd = 'mkdir -p "%s" && xcopy /E "%s" "%s"';
         }
-
+        $this->phpci->log('CopyBuild execute cmd: '.(sprintf($cmd, $this->directory, $build, $this->directory)));
         $success = $this->phpci->executeCommand($cmd, $this->directory, $build, $this->directory);
 
         $this->deleteIgnoredFiles();
-
+        $this->phpci->log('CopyBuild execute done '.$success);
         return $success;
     }
 
