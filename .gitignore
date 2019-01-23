@@ -15,6 +15,7 @@ PHPCI/Model/Migration.php
 PHPCI/Model/Base/MigrationBase.php
 PHPCI/Store/MigrationStore.php
 PHPCI/Store/Base/MigrationStoreBase.php
+PHPCI/Plugin/VirtualHostCreator.php
 local_vars.php
 Tests/PHPCI/config.yml
 /node_modules
