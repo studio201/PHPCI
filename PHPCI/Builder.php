@@ -309,7 +309,8 @@ class Builder implements LoggerAwareInterface
         $this->interpolator->setupInterpolationVars(
             $this->build,
             $this->buildPath,
-            PHPCI_URL
+            PHPCI_URL,
+            $this
         );
 
         $this->commandExecutor->setBuildPath($this->buildPath);
