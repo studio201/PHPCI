@@ -47,6 +47,10 @@ class BuildInterpolator
                 $php = $buildSettings['php'];
                 $this->interpolation_vars['%PHP%'] = $php['path'];
             }
+            $builder->log('setupInterpolationVars PHP path '.$php['path']);
+
+        } else {
+            $build->setLog('setupInterpolationVars Builder not found');
         }
 
 
