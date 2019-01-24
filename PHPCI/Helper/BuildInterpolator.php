@@ -32,7 +32,7 @@ class BuildInterpolator
      * @param string $buildPath
      * @param string $phpCiUrl
      */
-    public function setupInterpolationVars(Build $build, $buildPath, $phpCiUrl, Builder $builder = null)
+    public function setupInterpolationVars(Build $build, $buildPath, $phpCiUrl, Builder $builder = null, $buildSettings = null)
     {
 
         $this->interpolation_vars = array();
@@ -40,8 +40,8 @@ class BuildInterpolator
 
         //use standard path of php
         $this->interpolation_vars['%PHP%'] = 'php';
-        if ($builder != null) {
-            $buildSettings = $builder->getConfig('build_settings');
+        if ($buildSettings != null) {
+
             //override global php path
             if (isset($buildSettings['php'])) {
                 $php = $buildSettings['php'];

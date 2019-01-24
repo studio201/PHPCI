@@ -310,7 +310,8 @@ class Builder implements LoggerAwareInterface
             $this->build,
             $this->buildPath,
             PHPCI_URL,
-            $this
+            $this, 
+            $this->config['build_settings']
         );
 
         $this->commandExecutor->setBuildPath($this->buildPath);
