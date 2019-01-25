@@ -62,7 +62,7 @@ class CopyBuild implements \PHPCI\Plugin
             $cmd = 'mkdir -p "%s" && xcopy /E "%s" "%s.git" "%s"';
         }
         $this->phpci->log('CopyBuild execute cmd: '.(sprintf($cmd, $this->directory, $build, $build, $this->directory)));
-        $success = $this->phpci->executeCommand($cmd, $this->directory, $build, $this->directory);
+        $success = $this->phpci->executeCommand($cmd, $this->directory, $build, $build, $this->directory);
 
         $this->deleteIgnoredFiles();
         $this->phpci->log('CopyBuild execute done '.$success);
