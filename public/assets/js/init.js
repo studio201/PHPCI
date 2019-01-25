@@ -13,6 +13,9 @@
 $(function () {
     $('#latest-builds').on('latest-builds:reload', bindAppDeleteEvents);
     $('#latest-builds').trigger('latest-builds:reload');
+    $('.treeview').not('.treeview_inited').addClass('treeview_inited').on("click", function(){
+        $(this).toggle('active');
+    })
 });
 
 function bindAppDeleteEvents () {
