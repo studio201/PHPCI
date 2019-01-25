@@ -1,4 +1,3 @@
-
 var PHPCI = {
     intervals: {},
 
@@ -8,7 +7,7 @@ var PHPCI = {
 
         $(document).ready(function () {
             // Format datetimes
-            $('time[datetime]').each(function() {
+            $('time[datetime]').each(function () {
                 var thisDate = $(this).attr('datetime');
                 var formattedDate = moment(thisDate).format($(this).data('format') || 'lll');
                 $(this).text(formattedDate);
@@ -24,12 +23,15 @@ var PHPCI = {
             }
 
             PHPCI.uiUpdated();
-            
+
             // Set menu is active
-			$('a[href="'+document.URL+'"]').parent().addClass('active');
-			$('a[href="'+document.URL+'"]').parent().parent().addClass('menu-open');
-			$('a[href="'+document.URL+'"]').parent().parent().parent().addClass('active');
-			
+            $('a[href="' + document.URL + '"]').parent().addClass('active');
+            $('a[href="' + document.URL + '"]').parent().parent().addClass('menu-open');
+            $('a[href="' + document.URL + '"]').parent().parent().parent().addClass('active');
+            $('.treeview').not('.treeview_inited').addClass('treeview_inited').on("click", function () {
+                $(this).toggle('active');
+            })
+
         });
 
         $(window).on('builds-updated', function (e, data) {
@@ -245,22 +247,22 @@ var PHPCIConfirmDialog = Class.extend({
              */
             $('body').append(
                 '<div class="modal fade" id="confirm-dialog">'
-                    + '<div class="modal-dialog">'
-                    + '<div class="modal-content">'
-                    + '<div class="modal-header">'
-                    + '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'
-                    + '<h4 class="modal-title"></h4>'
-                    + '</div>'
-                    + '<div class="modal-body">'
-                    + '<p></p>'
-                    + '</div>'
-                    + '<div class="modal-footer">'
-                    + '<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>'
-                    + '<button type="button" class="btn btn-primary"></button>'
-                    + '</div>'
-                    + '</div>'
-                    + '</div>'
-                    + '</div>'
+                + '<div class="modal-dialog">'
+                + '<div class="modal-content">'
+                + '<div class="modal-header">'
+                + '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'
+                + '<h4 class="modal-title"></h4>'
+                + '</div>'
+                + '<div class="modal-body">'
+                + '<p></p>'
+                + '</div>'
+                + '<div class="modal-footer">'
+                + '<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>'
+                + '<button type="button" class="btn btn-primary"></button>'
+                + '</div>'
+                + '</div>'
+                + '</div>'
+                + '</div>'
             );
         }
 
@@ -302,7 +304,9 @@ var PHPCIConfirmDialog = Class.extend({
         /*
          Bind the close event of the dialog to the set of onClose* methods
          */
-        this.$dialog.on('hidden.bs.modal', function () {this.onClose()}.bind(this));
+        this.$dialog.on('hidden.bs.modal', function () {
+            this.onClose()
+        }.bind(this));
         this.$dialog.on('hidden.bs.modal', function () {
             if (this.confirmed) {
                 this.onCloseConfirmed();
@@ -342,17 +346,20 @@ var PHPCIConfirmDialog = Class.extend({
     /**
      * Called only when confirmed dialog was closed
      */
-    onCloseConfirmed: function () {},
+    onCloseConfirmed: function () {
+    },
 
     /**
      * Called only when canceled dialog was closed
      */
-    onCloseCanceled: function () {},
+    onCloseCanceled: function () {
+    },
 
     /**
      * Called always when the dialog was closed
      */
-    onClose: function () {},
+    onClose: function () {
+    },
 
     showStatusMessage: function (message, closeTimeout) {
         this.$confirmBtn.hide();
@@ -377,13 +384,11 @@ var PHPCIConfirmDialog = Class.extend({
 /**
  * Used to initialise the project form:
  */
-function setupProjectForm()
-{
+function setupProjectForm() {
     $('.github-container').hide();
 
-    $('#element-reference').change(function()
-    {
-        var el  = $(this);
+    $('#element-reference').change(function () {
+        var el = $(this);
         var val = el.val();
         var type = $('#element-type').val();
         var acceptable = {
@@ -400,16 +405,16 @@ function setupProjectForm()
 
         };
 
-        if( acceptable[type] !== undefined ) {
-            for(var i in acceptable[type]) {
-                if(val.match(acceptable[type][i])) {
+        if (acceptable[type] !== undefined) {
+            for (var i in acceptable[type]) {
+                if (val.match(acceptable[type][i])) {
                     el.val(val.replace(acceptable[type][i], '$1'));
                 }
             }
         }
     });
 
-    $('#element-type').change(function() {
+    $('#element-type').change(function () {
         if ($(this).val() == 'github') {
             $('#loading').show();
 
@@ -438,11 +443,10 @@ function setupProjectForm()
         $('#element-reference').trigger('change');
     });
 
-    $('#element-github').change(function()
-    {
+    $('#element-github').change(function () {
         var val = $('#element-github').val();
 
-        if(val != 'choose') {
+        if (val != 'choose') {
             $('#element-type').val('github');
             $('#element-reference').val(val);
 
@@ -466,7 +470,8 @@ function setupProjectForm()
 
 var Lang = {
     get: function () {
-        var args = Array.prototype.slice.call(arguments);;
+        var args = Array.prototype.slice.call(arguments);
+        ;
         var string = args.shift();
 
         if (PHPCI_STRINGS[string]) {
