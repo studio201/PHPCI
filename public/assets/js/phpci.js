@@ -29,7 +29,7 @@ var PHPCI = {
             $('a[href="' + document.URL + '"]').parent().parent().addClass('menu-open');
             $('a[href="' + document.URL + '"]').parent().parent().parent().addClass('active');
             $('.treeview').not('.treeview_inited').addClass('treeview_inited').on("click", function () {
-                $(this).toggle('active');
+                $(this).toggleClass('active');
             })
 
         });
