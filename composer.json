@@ -52,8 +52,8 @@
         "maknz/slack": "~1.7",
         "hipchat/hipchat-php": "~1.4",
         "mremi/flowdock": "~1.0",
-        "apigen/apigen": "4.1.2",
-        "roave/better-reflection": "dev-master#c87d856"
+        "apigen/apigen": "dev-master",
+        "roave/better-reflection": "dev-master"
     },
 
     "require-dev": {
