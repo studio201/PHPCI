@@ -55,6 +55,9 @@ class CopyBuild implements \PHPCI\Plugin
         if ($this->directory == $build) {
             return false;
         }
+        if($build==DIRECTORY_SEPARATOR){
+            $build=".".DIRECTORY_SEPARATOR;
+        }
 
         $this->wipeExistingDirectory();
         $cmd = 'mkdir -p "%s" && cp -r %s* %s.git* %s';
