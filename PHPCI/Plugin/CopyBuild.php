@@ -57,7 +57,7 @@ class CopyBuild implements \PHPCI\Plugin
         }
         if($build == DIRECTORY_SEPARATOR){
             $build=".".DIRECTORY_SEPARATOR;
-             $this->phpci->log('CopyBuild builddir '.$build);
+            $this->phpci->log('CopyBuild builddir '.$build);
         }
 
         $this->wipeExistingDirectory();
@@ -67,7 +67,7 @@ class CopyBuild implements \PHPCI\Plugin
         }
         $this->phpci->log('CopyBuild execute cmd: '.(sprintf($cmd, $this->directory, $build, $this->directory)));
         $success = $this->phpci->executeCommand($cmd, $this->directory, $build, $this->directory);
-
+        $this->phpci->log('CopyBuild execute deleteIgnoredFiles');
         $this->deleteIgnoredFiles();
         $this->phpci->log('CopyBuild execute done '.$success);
         return $success;
