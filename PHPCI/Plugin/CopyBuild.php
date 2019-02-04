@@ -96,6 +96,7 @@ class CopyBuild implements \PHPCI\Plugin
     {
         if ($this->ignore) {
             foreach ($this->phpci->ignore as $file) {
+                $this->phpci->log('CopyBuild remove ignored '.$file);
                 $cmd = 'rm -Rf "%s/%s"';
                 if (IS_WIN) {
                     $cmd = 'rmdir /S /Q "%s\%s"';
