@@ -55,7 +55,7 @@ class CopyBuild implements \PHPCI\Plugin
         if ($this->directory == $build) {
             return false;
         }
-        if($build == DIRECTORY_SEPARATOR){
+        if($build."" === "".DIRECTORY_SEPARATOR){
             $build=".".DIRECTORY_SEPARATOR;
             $this->phpci->log('CopyBuild builddir '.$build);
         }
