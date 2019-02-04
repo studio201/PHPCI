@@ -92,8 +92,9 @@ abstract class BaseCommandExecutor implements CommandExecutor
         );
 
         $pipes = array();
+        $this->logger->log("CWD: ".$this->buildPath);
         $process = proc_open($command, $descriptorSpec, $pipes, $this->buildPath, null);
-
+        
         if (is_resource($process)) {
             fclose($pipes[0]);
 
