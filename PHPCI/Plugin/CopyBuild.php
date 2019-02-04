@@ -58,20 +58,30 @@ class CopyBuild implements \PHPCI\Plugin
             return false;
         }
         if ($build."" === "".DIRECTORY_SEPARATOR) {
-            $build = ".".DIRECTORY_SEPARATOR;
             $this->phpci->log('CopyBuild builddir '.$build);
         } else {
             $this->phpci->log('CopyBuild builddir not equal '.($build." === ".DIRECTORY_SEPARATOR));
-            $build = ".".$build;
+            
         }
 
         $this->wipeExistingDirectory();
-        $cmd = 'mkdir -p "%s" && cp -r -d %s* %s';
+        $cmdMkdir = 'mkdir -p "%s"';
         if (IS_WIN) {
-            $cmd = 'mkdir -p "%s" && xcopy /E "%s" "%s"';
+            $cmdMkdir = 'mkdir -p "%s"';
         }
-        $this->phpci->log('CopyBuild execute cmd: '.(sprintf($cmd, $this->directory, $build, $this->directory)));
-        $success = $this->phpci->executeCommand($cmd, $this->directory, $build, $this->directory);
+        $this->phpci->log('CopyBuild execute cmd: '.(sprintf($cmdMkdir, $this->directory)));
+        $success = $this->phpci->executeCommand($cmdMkdir, $this->directory);
+        
+        
+        
+        $cmd = ' cp -r -d %s* %s';
+        if (IS_WIN) {
+            $cmd = 'xcopy /E "%s" "%s"';
+        }
+        $this->phpci->log('CopyBuild execute cmd: '.(sprintf($cmd, $build, $this->directory)));
+        $success = $this->phpci->executeCommand($cmd, $build, $this->directory);
+        
+        
         $this->phpci->log('CopyBuild execute deleteIgnoredFiles');
         $this->deleteIgnoredFiles();
         $this->phpci->log('CopyBuild execute done '.$success);
