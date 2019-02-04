@@ -59,6 +59,9 @@ class CopyBuild implements \PHPCI\Plugin
             $build=".".DIRECTORY_SEPARATOR;
             $this->phpci->log('CopyBuild builddir '.$build);
         }
+        else{
+            $this->phpci->log('CopyBuild builddir not equal '.($build." === ".DIRECTORY_SEPARATOR));
+        }
 
         $this->wipeExistingDirectory();
         $cmd = 'mkdir -p "%s" && cp -r -d %s* %s';
