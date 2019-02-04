@@ -49,9 +49,9 @@ class CopyBuild implements \PHPCI\Plugin
     */
     public function execute()
     {
-        $this->phpci->log('CopyBuild execute()');
+       
         $build = $this->phpci->buildPath;
-
+        $this->phpci->log('CopyBuild execute('.$build.')');
         if ($this->directory == $build) {
             return false;
         }
