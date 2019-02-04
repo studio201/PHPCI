@@ -10,15 +10,15 @@
 namespace PHPCI\Plugin;
 
 use PHPCI\Builder;
-use PHPCI\Model\Build;
 use PHPCI\Helper\Lang;
+use PHPCI\Model\Build;
 
 /**
-* Copy Build Plugin - Copies the entire build to another directory.
-* @author       Dan Cryer <dan@block8.co.uk>
-* @package      PHPCI
-* @subpackage   Plugins
-*/
+ * Copy Build Plugin - Copies the entire build to another directory.
+ * @author       Dan Cryer <dan@block8.co.uk>
+ * @package      PHPCI
+ * @subpackage   Plugins
+ */
 class CopyBuild implements \PHPCI\Plugin
 {
     protected $directory;
@@ -35,32 +35,34 @@ class CopyBuild implements \PHPCI\Plugin
      */
     public function __construct(Builder $phpci, Build $build, array $options = array())
     {
-        $path            = $phpci->buildPath;
-        if(!isset($options['directory']))$options['directory'] = "../../../public/lastbuilds/%PROJECT%/";
-        $this->phpci     = $phpci;
-        $this->build     = $build;
+        $path = $phpci->buildPath;
+        if (!isset($options['directory'])) {
+            $options['directory'] = "../../../public/lastbuilds/%PROJECT%/";
+        }
+        $this->phpci = $phpci;
+        $this->build = $build;
         $this->directory = isset($options['directory']) ? $this->phpci->interpolate($options['directory']) : $path;
-        $this->wipe      = isset($options['wipe']) ?  (bool)$options['wipe'] : false;
-        $this->ignore    = isset($options['respect_ignore']) ?  (bool)$options['respect_ignore'] : false;
+        $this->wipe = isset($options['wipe']) ? (bool)$options['wipe'] : false;
+        $this->ignore = isset($options['respect_ignore']) ? (bool)$options['respect_ignore'] : false;
     }
 
     /**
-    * Copies files from the root of the build directory into the target folder
-    */
+     * Copies files from the root of the build directory into the target folder
+     */
     public function execute()
     {
-       
+
         $build = $this->phpci->buildPath;
         $this->phpci->log('CopyBuild execute('.$build.')');
         if ($this->directory == $build) {
             return false;
         }
-        if($build."" === "".DIRECTORY_SEPARATOR){
-            $build=".".DIRECTORY_SEPARATOR;
+        if ($build."" === "".DIRECTORY_SEPARATOR) {
+            $build = ".".DIRECTORY_SEPARATOR;
             $this->phpci->log('CopyBuild builddir '.$build);
-        }
-        else{
+        } else {
             $this->phpci->log('CopyBuild builddir not equal '.($build." === ".DIRECTORY_SEPARATOR));
+            $build = ".".$build;
         }
 
         $this->wipeExistingDirectory();
@@ -73,6 +75,7 @@ class CopyBuild implements \PHPCI\Plugin
         $this->phpci->log('CopyBuild execute deleteIgnoredFiles');
         $this->deleteIgnoredFiles();
         $this->phpci->log('CopyBuild execute done '.$success);
+
         return $success;
     }
 
