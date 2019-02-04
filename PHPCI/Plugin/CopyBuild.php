@@ -61,7 +61,7 @@ class CopyBuild implements \PHPCI\Plugin
         }
 
         $this->wipeExistingDirectory();
-        $cmd = 'mkdir -p "%s" && cp -r %s* %s';
+        $cmd = 'mkdir -p "%s" && cp -r -d %s* %s';
         if (IS_WIN) {
             $cmd = 'mkdir -p "%s" && xcopy /E "%s" "%s"';
         }
