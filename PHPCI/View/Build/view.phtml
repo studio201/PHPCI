@@ -117,7 +117,7 @@ $phpcoverageroot = $_SERVER["DOCUMENT_ROOT"].'/coverage/'.$build->getProjectId()
 $phpcoverageexists = is_dir($phpcoverageroot);
 $phpdocroot = $_SERVER["DOCUMENT_ROOT"].'/phpdoc/'.$build->getProjectId();
 $phpdocexists = is_dir($phpdocroot); 
-$codeceptionroot = $_SERVER["DOCUMENT_ROOT"].'/codeception/'.$build->getProjectId()."/records.html";
+$codeceptionroot = $_SERVER["DOCUMENT_ROOT"].'/codeception/'.$build->getProjectId().'/'.$build->getId()."/records.html";
 $codeceptionexists =  file_exists($codeceptionroot); 
 
 
