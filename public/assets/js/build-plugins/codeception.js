@@ -69,7 +69,7 @@ var codeceptionPlugin = ActiveBuild.UiPlugin.extend({
                     '<small><strong>'+Lang.get('name')+':</strong> '+tests[i].name+'</small><br />' +
                     '<small><strong>'+Lang.get('file')+':</strong> '+tests[i].file+'</small><br />' +
                     (tests[i].message
-                        ? '<small><strong>'+Lang.get('message')+':</strong> '+tests[i].message+'</small>'
+                        ? '<small><strong>'+Lang.get('message')+':</strong> '+tests[i].message.replace(/(?:\r\n|\r|\n)/g, '<br/>')+'</small>'
                         : '') +
                 '</td>' +
                 '</tr>');
