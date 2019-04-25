@@ -94,7 +94,7 @@ class Codeception implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
             $this->args = (string) $options['args'];
         }
         if (isset($options['path'])) {
-            $this->path = $options['path'];
+            $this->path = $this->phpci->interpolate($options['path']);
         }
     }
 
