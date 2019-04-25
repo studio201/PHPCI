@@ -40,6 +40,16 @@ class Codeception implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
     protected $ymlConfigFile;
 
     /**
+     * @var
+     */
+    protected $chromeDriverPath;
+
+    /**
+     * @var mixed
+     */
+    protected $chromeDriverStartStop;
+
+    /**
      * @var string $path The path to the codeception tests folder.
      */
     protected $path;
@@ -62,11 +72,11 @@ class Codeception implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
      */
     public static function findConfigFile($buildPath)
     {
-        if (file_exists($buildPath . 'codeception.yml')) {
+        if (file_exists($buildPath.'codeception.yml')) {
             return 'codeception.yml';
         }
 
-        if (file_exists($buildPath . 'codeception.dist.yml')) {
+        if (file_exists($buildPath.'codeception.dist.yml')) {
             return 'codeception.dist.yml';
         }
 
@@ -83,19 +93,28 @@ class Codeception implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
     {
         $this->phpci = $phpci;
         $this->build = $build;
-        $this->path = 'tests' . DIRECTORY_SEPARATOR . '_output' . DIRECTORY_SEPARATOR;
-
+        $this->path = 'tests'.DIRECTORY_SEPARATOR.'_output'.DIRECTORY_SEPARATOR;
+        $this->chromeDriverPath = '/usr/bin/chromedriver';
+        $this->chromeDriverStartStop = true;
         if (empty($options['config'])) {
             $this->ymlConfigFile = self::findConfigFile($this->phpci->buildPath);
         } else {
             $this->ymlConfigFile = $options['config'];
         }
         if (isset($options['args'])) {
-            $this->args = (string) $options['args'];
+            $this->args = (string)$options['args'];
         }
         if (isset($options['path'])) {
             $this->path = $this->phpci->interpolate($options['path']);
         }
+        if (isset($options['chromedriver_path'])) {
+            $this->chromeDriverPath = $options['chromedriver_path'];
+        }
+        if (isset($options['chromedriver_startstop'])) {
+            $this->chromeDriverStartStop = $options['chromedriver_startstop'];
+        }
+
+
     }
 
     /**
@@ -122,43 +141,62 @@ class Codeception implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
         $this->phpci->logExecOutput(false);
 
         $codecept = $this->phpci->findBinary('codecept');
-        if(is_dir($this->phpci->buildPath . $this->path) == false){
-            mkdir($this->phpci->buildPath . $this->path,775, true);
-        }
+
         if (!$codecept) {
             $this->phpci->logFailure(Lang::get('could_not_find', 'codecept'));
 
             return false;
         }
-
-        $cmd = 'cd "%s" && ' . $codecept . ' run -c "%s" --xml ' . $this->args;
-
-        if (IS_WIN) {
-            $cmd = 'cd /d "%s" && ' . $codecept . ' run -c "%s" --xml ' . $this->args;
+        $codeceptPath = $this->phpci->buildPath.$this->path;
+        if (is_dir($codeceptPath) == false) {
+            mkdir($codeceptPath, 0777, true);
+        }
+        if ($this->chromeDriverStartStop == true && $this->chromeDriverPath != '') {
+            $cmdStart = 'if [ ! -f "chromedriver.pid" ]; then '.$this->chromeDriverPath.' --url-base=/wd/hub  2>&1 & echo $! >chromedriver.pid; fi';
+            $successStart = $this->phpci->executeCommand($cmdStart);
+            $this->phpci->log(
+                'Codeception Start Server: '.$cmdStart,
+                Loglevel::DEBUG
+            );
         }
 
-        $configPath = $this->phpci->buildPath . $configPath;
+
+        $cmd = 'cd "%s" && '.$codecept.' run -c "%s" --xml '.$this->args;
+
+        if (IS_WIN) {
+            $cmd = 'cd /d "%s" && '.$codecept.' run -c "%s" --xml '.$this->args;
+        }
+
+        $configPath = $this->phpci->buildPath.$configPath;
         $success = $this->phpci->executeCommand($cmd, $this->phpci->buildPath, $configPath);
 
         $this->phpci->log(
-            'Codeception XML path: '. $this->phpci->buildPath . $this->path . 'report.xml',
+            'Codeception XML path: '.$this->phpci->buildPath.$this->path.'report.xml',
             Loglevel::DEBUG
         );
 
-        $xml = file_get_contents($this->phpci->buildPath . $this->path . 'report.xml', false);
+        $xml = file_get_contents($this->phpci->buildPath.$this->path.'report.xml', false);
         $parser = new Parser($this->phpci, $xml);
         $output = $parser->parse();
 
         $meta = array(
-            'tests'     => $parser->getTotalTests(),
+            'tests' => $parser->getTotalTests(),
             'timetaken' => $parser->getTotalTimeTaken(),
-            'failures'  => $parser->getTotalFailures()
+            'failures' => $parser->getTotalFailures(),
         );
 
         $this->build->storeMeta('codeception-meta', $meta);
         $this->build->storeMeta('codeception-data', $output);
         $this->build->storeMeta('codeception-errors', $parser->getTotalFailures());
         $this->phpci->logExecOutput(true);
+        if ($this->chromeDriverStartStop == true && $this->chromeDriverPath != '') {
+            $cmdStop = 'if [ -f "chromedriver.pid" ]; then kill `cat chromedriver.pid` && rm chromedriver.pid; fi';
+            $successStop = $this->phpci->executeCommand($cmdStop);
+            $this->phpci->log(
+                'Codeception Stop Server: '.$cmdStop,
+                Loglevel::DEBUG
+            );
+        }
 
         return $success;
     }
