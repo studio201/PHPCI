@@ -155,6 +155,8 @@ class Codeception implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
             );
             mkdir($codeceptPath, 0777, true);
         }
+         $this->args.='-o "paths: output: '.$this->phpci->buildPath.$this->path.'"';
+        
         if ($this->chromeDriverStartStop == true && $this->chromeDriverPath != '') {
             $cmdStart = 'if [ ! -f "chromedriver.pid" ]; then '.$this->chromeDriverPath.' --url-base=/wd/hub  2>&1 & echo $! >chromedriver.pid; fi';
             $successStart = $this->phpci->executeCommand($cmdStart);
@@ -170,7 +172,11 @@ class Codeception implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
         if (IS_WIN) {
             $cmd = 'cd /d "%s" && '.$codecept.' run -c "%s" --xml '.$this->args;
         }
-
+        $this->phpci->log(
+            'Codeception cmd: '.$cmd,
+            Loglevel::DEBUG
+        );
+        
         $configPath = $this->phpci->buildPath.$configPath;
         $success = $this->phpci->executeCommand($cmd, $this->phpci->buildPath, $configPath);
 
