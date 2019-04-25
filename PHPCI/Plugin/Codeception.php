@@ -149,6 +149,10 @@ class Codeception implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
         }
         $codeceptPath = $this->phpci->buildPath.$this->path;
         if (is_dir($codeceptPath) == false) {
+            $this->phpci->log(
+            'Codeception mkdir('.$codeceptPath.')',
+            Loglevel::DEBUG
+            );
             mkdir($codeceptPath, 0777, true);
         }
         if ($this->chromeDriverStartStop == true && $this->chromeDriverPath != '') {
