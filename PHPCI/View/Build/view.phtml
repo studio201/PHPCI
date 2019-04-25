@@ -117,8 +117,8 @@ $phpcoverageroot = $_SERVER["DOCUMENT_ROOT"].'/coverage/'.$build->getProjectId()
 $phpcoverageexists = is_dir($phpcoverageroot);
 $phpdocroot = $_SERVER["DOCUMENT_ROOT"].'/phpdoc/'.$build->getProjectId();
 $phpdocexists = is_dir($phpdocroot); 
-$codeceptionroot = $_SERVER["DOCUMENT_ROOT"].'/codeception/'.$build->getProjectId();
-$codeceptionexists = is_dir($codeceptionroot); 
+$codeceptionroot = $_SERVER["DOCUMENT_ROOT"].'/codeception/'.$build->getProjectId()."/records.html";
+$codeceptionexists =  file_exists($codeceptionroot); 
 
 
 ?>
@@ -202,7 +202,7 @@ $codeceptionexists = is_dir($codeceptionroot);
         <?php if ($codeceptionexists){ ?>
             <div class="tab-pane" id="codeception">
                 <div id="php-doc-11" class="row">
-                    <iframe frameBorder="0" width="100%" height="500" src="<?php print "//".$_SERVER["SERVER_NAME"].":".$_SERVER['SERVER_PORT']?>/codeception/<?php print $build->getProjectId()."/".$build->getId()."/" ?>/"></iframe>
+                    <iframe frameBorder="0" width="100%" height="500" src="<?php print "//".$_SERVER["SERVER_NAME"].":".$_SERVER['SERVER_PORT']?>/codeception/<?php print $build->getProjectId()."/".$build->getId()."/records.html" ?>/"></iframe>
                 </div>
             </div>
 
