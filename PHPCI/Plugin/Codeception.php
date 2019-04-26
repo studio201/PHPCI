@@ -53,6 +53,11 @@ class Codeception implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
      * @var string $path The path to the codeception tests folder.
      */
     protected $path;
+    
+        /**
+     * @var bool
+     */
+    protected $logging = false;
 
     /**
      * @param $stage
@@ -113,6 +118,10 @@ class Codeception implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
         if (isset($options['chromedriver_startstop'])) {
             $this->chromeDriverStartStop = $options['chromedriver_startstop'];
         }
+        
+        if (!empty($options['logging'])) {
+            $this->logging = $options['logging'];
+        }
 
 
     }
@@ -138,7 +147,7 @@ class Codeception implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
      */
     protected function runConfigFile($configPath)
     {
-        $this->phpci->logExecOutput(true);
+        $this->phpci->logExecOutput($this->logging);
 
         $codecept = $this->phpci->findBinary('codecept');
 

@@ -15,11 +15,11 @@ use PHPCI\Model\Build;
 use Psr\Log\LogLevel;
 
 /**
-* PHP Mess Detector Plugin - Allows PHP Mess Detector testing.
-* @author       Dan Cryer <dan@block8.co.uk>
-* @package      PHPCI
-* @subpackage   Plugins
-*/
+ * PHP Mess Detector Plugin - Allows PHP Mess Detector testing.
+ * @author       Dan Cryer <dan@block8.co.uk>
+ * @package      PHPCI
+ * @subpackage   Plugins
+ */
 class PhpMessDetector implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
 {
     /**
@@ -57,6 +57,11 @@ class PhpMessDetector implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
     protected $rules;
 
     /**
+     * @var bool
+     */
+    protected $logging = false;
+
+    /**
      * Check if this plugin can be executed.
      * @param $stage
      * @param Builder $builder
@@ -81,8 +86,8 @@ class PhpMessDetector implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
      * $options['stub']      Stub Content. No Default Value
      *
      * @param Builder $phpci
-     * @param Build   $build
-     * @param array   $options
+     * @param Build $build
+     * @param array $options
      */
     public function __construct(Builder $phpci, Build $build, array $options = array())
     {
@@ -94,12 +99,16 @@ class PhpMessDetector implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
         $this->rules = array('codesize', 'unusedcode', 'naming');
         $this->allowed_warnings = 0;
 
+
         if (isset($options['zero_config']) && $options['zero_config']) {
             $this->allowed_warnings = -1;
         }
 
         if (!empty($options['path'])) {
             $this->path = $options['path'];
+        }
+        if (!empty($options['logging'])) {
+            $this->logging = $options['logging'];
         }
 
         if (array_key_exists('allowed_warnings', $options)) {
@@ -189,12 +198,13 @@ class PhpMessDetector implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
     {
         if (!empty($this->rules) && !is_array($this->rules)) {
             $this->phpci->logFailure('The "rules" option must be an array.');
+
             return false;
         }
 
         foreach ($this->rules as &$rule) {
             if (strpos($rule, '/') !== false) {
-                $rule = $this->phpci->buildPath . $rule;
+                $rule = $this->phpci->buildPath.$rule;
             }
         }
 
@@ -207,26 +217,28 @@ class PhpMessDetector implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
      */
     protected function executePhpMd($binaryPath)
     {
-        $cmd = $binaryPath . ' "%s" xml %s %s %s';
+        $this->phpci->logExecOutput($this->logging);
+       
+        $cmd = $binaryPath.' "%s" xml %s %s %s';
 
         $path = $this->getTargetPath();
 
         $ignore = '';
         if (count($this->ignore)) {
-            $ignore = ' --exclude ' . implode(',', $this->ignore);
+            $ignore = ' --exclude '.implode(',', $this->ignore);
         }
 
         $suffixes = '';
         if (count($this->suffixes)) {
-            $suffixes = ' --suffixes ' . implode(',', $this->suffixes);
+            $suffixes = ' --suffixes '.implode(',', $this->suffixes);
         }
 
         // Disable exec output logging, as we don't want the XML report in the log:
-        $this->phpci->logExecOutput(true);
+
         $this->phpci->log(
-                'Mess Detector: '.$cmd,
-                LogLevel::DEBUG
-            );
+            'Mess Detector: '.$cmd,
+            LogLevel::DEBUG
+        );
         // Run PHPMD:
         $this->phpci->executeCommand(
             $cmd,
@@ -246,11 +258,13 @@ class PhpMessDetector implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
      */
     protected function getTargetPath()
     {
-        $path = $this->phpci->buildPath . $this->path;
+        $path = $this->phpci->buildPath.$this->path;
         if (!empty($this->path) && $this->path{0} == '/') {
             $path = $this->path;
+
             return $path;
         }
+
         return $path;
     }
 
@@ -266,8 +280,10 @@ class PhpMessDetector implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
 
         if ($this->allowed_warnings != -1 && $errorCount > $this->allowed_warnings) {
             $success = false;
+
             return $success;
         }
+
         return $success;
     }
 }

@@ -10,15 +10,14 @@
 namespace PHPCI\Plugin;
 
 use PHPCI\Builder;
-use PHPCI\Helper\Lang;
 use PHPCI\Model\Build;
 
 /**
-* Php Parallel Lint Plugin - Provides access to PHP lint functionality.
-* @author       Vaclav Makes <vaclav@makes.cz>
-* @package      PHPCI
-* @subpackage   Plugins
-*/
+ * Php Parallel Lint Plugin - Provides access to PHP lint functionality.
+ * @author       Vaclav Makes <vaclav@makes.cz>
+ * @package      PHPCI
+ * @subpackage   Plugins
+ */
 class PhpParallelLint implements \PHPCI\Plugin
 {
     /**
@@ -52,6 +51,11 @@ class PhpParallelLint implements \PHPCI\Plugin
     protected $shortTag;
 
     /**
+     * @var bool
+     */
+    protected $logging = false;
+
+    /**
      * Standard Constructor
      *
      * $options['directory']  Output Directory. Default: %BUILDPATH%
@@ -61,8 +65,8 @@ class PhpParallelLint implements \PHPCI\Plugin
      * $options['stub']       Stub Content. No Default Value
      *
      * @param Builder $phpci
-     * @param Build   $build
-     * @param array   $options
+     * @param Build $build
+     * @param array $options
      */
     public function __construct(Builder $phpci, Build $build, array $options = array())
     {
@@ -93,18 +97,23 @@ class PhpParallelLint implements \PHPCI\Plugin
                 $this->extensions = str_replace(' ', '', $options['extensions']);
             }
         }
+
+        if (!empty($options['logging'])) {
+            $this->logging = $options['logging'];
+        }
     }
 
     /**
-    * Executes parallel lint
-    */
+     * Executes parallel lint
+     */
     public function execute()
     {
+        $this->phpci->logExecOutput($this->logging);
         list($ignore) = $this->getFlags();
 
         $phplint = $this->phpci->findBinary('parallel-lint');
 
-        $cmd = $phplint . ' -e %s' . '%s %s "%s"';
+        $cmd = $phplint.' -e %s'.'%s %s "%s"';
         $success = $this->phpci->executeCommand(
             $cmd,
             $this->extensions,
@@ -119,6 +128,7 @@ class PhpParallelLint implements \PHPCI\Plugin
         if (preg_match_all('/Parse error\:/', $output, $matches)) {
             $this->build->storeMeta('phplint-errors', count($matches[0]));
         }
+        $this->phpci->logExecOutput(true);
 
         return $success;
     }
@@ -131,7 +141,7 @@ class PhpParallelLint implements \PHPCI\Plugin
     {
         $ignoreFlags = array();
         foreach ($this->ignore as $ignoreDir) {
-            $ignoreFlags[] = '--exclude "' . $this->phpci->buildPath . $ignoreDir . '"';
+            $ignoreFlags[] = '--exclude "'.$this->phpci->buildPath.$ignoreDir.'"';
         }
         $ignore = implode(' ', $ignoreFlags);
 
