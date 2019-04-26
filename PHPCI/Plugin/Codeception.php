@@ -138,7 +138,7 @@ class Codeception implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
      */
     protected function runConfigFile($configPath)
     {
-        $this->phpci->logExecOutput(false);
+        $this->phpci->logExecOutput(true);
 
         $codecept = $this->phpci->findBinary('codecept');
 
@@ -176,7 +176,6 @@ class Codeception implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
             'Codeception cmd: '.$cmd,
             Loglevel::DEBUG
         );
-        
         $configPath = $this->phpci->buildPath.$configPath;
         $success = $this->phpci->executeCommand($cmd, $this->phpci->buildPath, $configPath);
 

@@ -8,6 +8,7 @@ use PHPCI\Helper\Lang;
 use PHPCI\Logging\BuildLogger;
 use PHPCI\Model\Build;
 use PHPCI\Store\BuildStore;
+use Psr\Log\LogLevel;
 
 /**
  * Plugin Executor - Runs the configured plugins for a given build stage.
@@ -60,6 +61,7 @@ class Executor
         $pluginsToExecute = $this->getBranchSpecificPlugins($config, $stage, $pluginsToExecute);
 
         foreach ($pluginsToExecute as $pluginSet) {
+            
             if (!$this->doExecutePlugins($pluginSet, $stage)) {
                 $success = false;
             }
@@ -187,8 +189,12 @@ class Executor
 
         try {
             // Build and run it
+            $this->logger->log("build ".$class, LogLevel::DEBUG);
             $obj = $this->pluginFactory->buildPlugin($class, $options);
-            return $obj->execute();
+            $this->logger->log("execute ".$class, LogLevel::DEBUG);
+            $result =  $obj->execute();
+            $this->logger->log("execute done ".$class, LogLevel::DEBUG);
+            return $result;
         } catch (\Exception $ex) {
             $this->logger->logFailure(Lang::get('exception') . $ex->getMessage(), $ex);
             return false;

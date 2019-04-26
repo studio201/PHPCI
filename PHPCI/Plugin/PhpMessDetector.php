@@ -12,6 +12,7 @@ namespace PHPCI\Plugin;
 use PHPCI;
 use PHPCI\Builder;
 use PHPCI\Model\Build;
+use Psr\Log\LogLevel;
 
 /**
 * PHP Mess Detector Plugin - Allows PHP Mess Detector testing.
@@ -221,8 +222,11 @@ class PhpMessDetector implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
         }
 
         // Disable exec output logging, as we don't want the XML report in the log:
-        $this->phpci->logExecOutput(false);
-
+        $this->phpci->logExecOutput(true);
+        $this->phpci->log(
+                'Mess Detector: '.$cmd,
+                LogLevel::DEBUG
+            );
         // Run PHPMD:
         $this->phpci->executeCommand(
             $cmd,
