@@ -12,6 +12,10 @@
     <a  class="btn btn-danger" href="javascript:confirmDelete('<?php print PHPCI_URL . 'project/delete/' . $project->getId(); ?>', '<?php print Lang::out('project'); ?>', true)">
         <?php Lang::out('delete_project'); ?>
     </a>
+    
+    <a class="btn btn-default" href="<?php print PHPCI_URL . 'project/pause/' . $project->getId(); ?>">
+        <?php Lang::out('pause_project_builds'); ?>
+    </a>
 
     <div class="pull-right btn-group">
         <a class="btn btn-success" href="<?php print PHPCI_URL . 'project/build/' . $project->getId(); ?><?php echo !empty($branch) ? '?branch=' . urlencode($branch) : '' ?>">

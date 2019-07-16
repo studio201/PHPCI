@@ -84,6 +84,11 @@ class ProjectService
         if (array_key_exists('archived', $options)) {
             $project->setArchived((bool)$options['archived']);
         }
+        
+        if (array_key_exists('disable_autobuild', $options)) {
+            $project->setDisableAutobuild((bool)$options['disable_autobuild']);
+        }
+        
 
         if (array_key_exists('branch', $options)) {
             $project->setBranch($options['branch']);

@@ -46,6 +46,9 @@ class ProjectBase extends Model
         'allow_public_status' => null,
         'archived' => null,
         'group_id' => null,
+        'disable_autobuild' => null,
+        'build_running' => null
+        
     );
 
     /**
@@ -66,6 +69,8 @@ class ProjectBase extends Model
         'allow_public_status' => 'getAllowPublicStatus',
         'archived' => 'getArchived',
         'group_id' => 'getGroupId',
+        'disable_autobuild' => 'getDisableAutobuild',
+        'build_running' => 'getBuildRunning',
 
         // Foreign key getters:
         'Group' => 'getGroup',
@@ -89,6 +94,8 @@ class ProjectBase extends Model
         'allow_public_status' => 'setAllowPublicStatus',
         'archived' => 'setArchived',
         'group_id' => 'setGroupId',
+        'disable_autobuild' => 'setDisableAutobuild',
+        'build_running' => 'setBuildRunning',
 
         // Foreign key setters:
         'Group' => 'setGroup',
@@ -157,6 +164,18 @@ class ProjectBase extends Model
             'length' => 11,
         ),
         'archived' => array(
+            'type' => 'tinyint',
+            'length' => 1,
+            'default' => null,
+        ),
+        
+        'disable_autobuild' => array(
+            'type' => 'tinyint',
+            'length' => 1,
+            'default' => null,
+        ),
+        
+        'build_running' => array(
             'type' => 'tinyint',
             'length' => 1,
             'default' => null,
@@ -345,6 +364,32 @@ class ProjectBase extends Model
 
         return $rtn;
     }
+    
+    
+   /**
+    * Get the value of DisableAutobuild / disable_autobuild.
+    *
+    * @return int
+    */
+    public function getDisableAutobuild()
+    {
+        $rtn    = $this->data['disable_autobuild'];
+
+        return $rtn;
+    }
+    
+     /**
+    * Get the value of DisableAutobuild / disable_autobuild.
+    *
+    * @return int
+    */
+    public function getBuildRunning()
+    {
+        $rtn    = $this->data['build_running'];
+
+        return $rtn;
+    }
+
 
     /**
     * Set the value of Id / id.
@@ -595,6 +640,47 @@ class ProjectBase extends Model
 
         $this->_setModified('group_id');
     }
+    
+     /**
+    * Set the value of DisableAutobuild / disable_autobuild.
+    *
+    * Must not be null.
+    * @param $value int
+    */
+    public function setDisableAutobuild($value)
+    {
+        $this->_validateNotNull('DisableAutobuild', $value);
+        $this->_validateInt('DisableAutobuild', $value);
+
+        if ($this->data['disable_autobuild'] === $value) {
+            return;
+        }
+
+        $this->data['disable_autobuild'] = $value;
+
+        $this->_setModified('disable_autobuild');
+    }
+
+     /**
+    * Set the value of BuildRunning / build_running.
+    *
+    * Must not be null.
+    * @param $value int
+    */
+    public function setBuildRunning($value)
+    {
+        $this->_validateNotNull('BuildRunning', $value);
+        $this->_validateInt('BuildRunning', $value);
+
+        if ($this->data['build_running'] === $value) {
+            return;
+        }
+
+        $this->data['build_running'] = $value;
+
+        $this->_setModified('build_running');
+    }
+
 
     /**
      * Get the ProjectGroup model for this Project by Id.

@@ -65,6 +65,7 @@ PHPCI',
     'view' => 'Ansehen',
     'build_now' => 'Jetzt bauen',
     'edit_project' => 'Projekt bearbeiten',
+    'pause_project_builds' => 'Project-Builds pausieren',
     'delete_project' => 'Projekt löschen',
 
     // Project Summary:

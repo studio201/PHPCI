@@ -174,6 +174,9 @@ class WebhookController extends \b8\Controller
     public function git($projectId)
     {
         $project = $this->fetchProject($projectId, array('local', 'remote'));
+        if($project->getDisableAutobuild() == true){
+            return array('status' => 'ok');
+        }
         $branch = $this->getParam('branch', $project->getBranch());
         $commit = $this->getParam('commit');
         $commitMessage = $this->getParam('message');
