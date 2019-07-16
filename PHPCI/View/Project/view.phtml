@@ -13,7 +13,7 @@
         <?php Lang::out('delete_project'); ?>
     </a>
     <?php if($project->getDisableAutobuild() == true){ ?>
-    <a class="btn btn-default" href="<?php print PHPCI_URL . 'project/pause/' . $project->getId(); ?>">
+    <a class="btn btn-default btn-danger" href="<?php print PHPCI_URL . 'project/pause/' . $project->getId(); ?>">
         <?php Lang::out('run_project_builds'); ?>
     </a>
     <?php }else{ ?>
