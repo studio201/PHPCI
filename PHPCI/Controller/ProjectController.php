@@ -302,6 +302,24 @@ class ProjectController extends PHPCI\Controller
         $response->setHeader('Location', PHPCI_URL.'project/view/' . $project->getId());
         return $response;
     }
+     /**
+    * Edit a project. Handles both the form and processing.
+    */
+    public function pause($projectId)
+    {
+        $method = $this->request->getMethod();
+        $project = $this->projectStore->getById($projectId);
+
+        if (empty($project)) {
+            throw new NotFoundException(Lang::get('project_x_not_found', $projectId));
+        }
+        $project->setDisableAutobuild(!$project->getDisableAutobuild());
+        $this->projectStore->save($project);
+        
+        $response = new b8\Http\Response\RedirectResponse();
+        $response->setHeader('Location', PHPCI_URL.'project/view/' . $project->getId());
+        return $response;
+    }
 
     /**
     * Create add / edit project form.
