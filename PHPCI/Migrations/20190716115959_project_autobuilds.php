@@ -3,7 +3,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class ErrorHash extends AbstractMigration
+class ProjectAutobuilds extends AbstractMigration
 {
     /**
      * Migrate Up.
