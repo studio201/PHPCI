@@ -279,7 +279,7 @@ class UserController extends Controller
     */
     public function delete($userId)
     {
-        $this->requireAdmin();
+        //$this->requireAdmin();
 
         $user   = $this->userStore->getById($userId);
 
