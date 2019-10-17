@@ -86,14 +86,15 @@ class Shell implements \PHPCI\Plugin
         $success = true;
 
         foreach ($this->commands as $command) {
+            $start = microtime(true);
             $this->phpci->log("cmd: ".$command);
             $command = $this->phpci->interpolate($command);
             $this->phpci->log("cmd interpolated: ".$command);
             if (!$this->phpci->executeCommand($command)) {
                 $success = false;
-                $this->phpci->log("Fehlgeschlagen: ".$command);
+                $this->phpci->log("Fehlgeschlagen: ".$command." (".(microtime(true)-$start)." s)");
             } else {
-                $this->phpci->log("Erfolgreich: ".$command);
+                $this->phpci->log("Erfolgreich: ".$command." (".(microtime(true)-$start)." s)");
             }
         }
 
