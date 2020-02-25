@@ -197,13 +197,15 @@
                     <?php if (count($group['projects'])): ?>
                     <ul class="treeview-menu">
                         <?php foreach($group['projects'] as $project): ?>
+                        <?php if($project->getArchived() == false || ($project->getArchived() == true && $this->User()->getIsAdmin())){ ?>
                         <li>
                             <a href="<?php print PHPCI_URL; ?>project/view/<?php print $project->getId(); ?>">
                                 <i class="fa fa-<?php print $project->getIcon(); ?>"></i>
                                 <span><?php print $project->getTitle(); ?></span>
                             </a>
 
-                            <?php /* <ul class="treeview-menu">
+                            <?php
+                            /* <ul class="treeview-menu">
 
                                 <li>
                                     <a href="<?php print PHPCI_URL; ?>project/view/<?php print $project->getId(); ?>">
@@ -233,6 +235,7 @@
                             </ul>
                             */ ?>
                         </li>
+                        <?php } ?>
                         <?php endforeach; ?>
                     </ul>
                     <?php endif; ?>
