@@ -208,7 +208,7 @@ class Codeception implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
         $this->build->storeMeta('codeception-errors', $parser->getTotalFailures());
         $this->phpci->logExecOutput(true);
         if ($this->chromeDriverStartStop == true && $this->chromeDriverPath != '') {
-            $cmdStop = 'if [ -f "chromedriver.pid" ]; then CHROMEDRIVERPID=`cat chromedriver.pid` && rm chromedriver.pid && echo "kill pid  $CHROMEDRIVERPID" && kill $CHROMEDRIVERPID 2>&1; fi';
+            $cmdStop = 'if [ -f "chromedriver.pid" ]; then CHROMEDRIVERPID=`cat chromedriver.pid` && rm chromedriver.pid && if [ -d "/proc/$CHROMEDRIVERPID/" ]; then echo "kill pid  $CHROMEDRIVERPID" && kill $CHROMEDRIVERPID 2>&1 >/dev/null; else echo "pid not exists"; fi  fi';
             $successStop = $this->phpci->executeCommand($cmdStop);
             $this->phpci->log(
                 'Codeception Stop Server: '.$cmdStop,
