@@ -34,6 +34,9 @@ abstract class BaseCommandExecutor implements CommandExecutor
      */
     protected $verbose;
 
+
+    protected $debugverbose;
+
     protected $lastOutput;
     protected $lastError;
 
@@ -50,6 +53,7 @@ abstract class BaseCommandExecutor implements CommandExecutor
      * @var string
      */
     protected $buildPath;
+
 
     /**
      * @param BuildLogger $logger
@@ -77,9 +81,9 @@ abstract class BaseCommandExecutor implements CommandExecutor
 
         $command = call_user_func_array('sprintf', $args);
         $this->logger->logDebug($command);
-        
+
         $this->logger->log($command);
-             
+
         if ($this->quiet) {
             $this->logger->log('Executing: ' . $command);
         }
@@ -94,7 +98,7 @@ abstract class BaseCommandExecutor implements CommandExecutor
         $pipes = array();
         $this->logger->log("CWD: ".$this->buildPath);
         $process = proc_open($command, $descriptorSpec, $pipes, $this->buildPath, null);
-        
+
         if (is_resource($process)) {
             fclose($pipes[0]);
 
@@ -103,15 +107,25 @@ abstract class BaseCommandExecutor implements CommandExecutor
 
             $lastOutput = '';
             $lastError  = '';
+            $fullVerbose = false;
+            if(strpos($command, "codecept")>0){
+                $fullVerbose = true;
+            }
             do {
                 usleep(200); //Give It Time To Start
 
                 while (($newData = fread($pipes[1], 1024)) && !feof($pipes[1])) {
                     $lastOutput .= $newData;
+                    if($fullVerbose){
+                        $this->logger->log($newData);
+                    }
                 }
 
                 while (($newData = fread($pipes[2], 1024)) && !feof($pipes[2])) {
                     $lastError .= $newData;
+                    if($fullVerbose) {
+                        $this->logger->log($newData, LogLevel::ERROR);
+                    }
                 }
 
                 $processStatus = proc_get_status($process);

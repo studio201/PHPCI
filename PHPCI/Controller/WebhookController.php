@@ -87,7 +87,7 @@ class WebhookController extends \b8\Controller
     public function bitbucket($projectId)
     {
         $project = $this->fetchProject($projectId, 'bitbucket');
-    
+
         // Support both old services and new webhooks
         if ($payload = $this->getParam('payload')) {
             return $this->bitbucketService(json_decode($payload, true), $project);
@@ -174,7 +174,9 @@ class WebhookController extends \b8\Controller
     public function git($projectId)
     {
         $project = $this->fetchProject($projectId, array('local', 'remote'));
-        if($project->getDisableAutobuild() == true){
+        $forceBuild = $this->getParam('force') ?? false;
+
+        if($project->getDisableAutobuild() == true && $forceBuild == false){
             return array('status' => 'ok');
         }
         $branch = $this->getParam('branch', $project->getBranch());
