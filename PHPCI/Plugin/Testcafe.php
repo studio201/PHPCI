@@ -88,8 +88,12 @@ class Testcafe implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
         $this->build = $build;
 
         //$this->testcafePath = '/usr/local/bin/testcafe';
-
-
+        if (isset($options['browsers'])) {
+            $this->browsers = (array)$options['browsers'];
+        }
+        else{
+            $this->browsers = ["chrome:headless"];
+        }
         if (isset($options['args'])) {
             $this->args = (string)$options['args'];
         }
@@ -99,7 +103,7 @@ class Testcafe implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
         if (isset($options['outputpath'])) {
             $this->outputpath = $this->phpci->interpolate($options['outputpath']);
         } else {
-            $this->outputpath = $this->phpci->interpolate("output/");
+            $this->outputpath = $this->phpci->interpolate("_output/");
         }
         if (!empty($options['logging'])) {
             $this->logging = $options['logging'];
@@ -111,9 +115,9 @@ class Testcafe implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
      */
     public function execute()
     {
-        if (is_dir($this->path) == false) {
-            throw new \Exception("No tests folder found");
-        }
+        //if (is_dir($this->path) == false) {
+        //    throw new \Exception("No tests folder found");
+       // }
 
         // Run any config files first. This can be either a single value or an array.
         return $this->run();
@@ -128,7 +132,9 @@ class Testcafe implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
     protected function run()
     {
         $this->phpci->logExecOutput($this->logging);
-
+        if(file_exists($this->phpci->buildPath."testcafe.config.json") == false){
+            @copy($this->phpci->buildPath."codeception.config.json.dist", $this->phpci->buildPath."testcafe.config.json");
+        }
         $testcafe = $this->phpci->findBinary('testcafe');
 
         if (!$testcafe) {
@@ -147,13 +153,13 @@ class Testcafe implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
         }
 
 
-        if ($this->args == "") {
-            $this->args = "chrome";
+        $this->args.=' -r xunit:'.$this->phpci->buildPath.$this->outputpath.'/report.xml';
+
+        $cmd = 'cd "%s"';
+        foreach($this->browsers as $browser){
+            $cmd.=' && '.$testcafe.' '.$browser.' '.$this->args.' '.$this->path;
         }
 
-        $this->args.=' -r xunit:'.$this->phpci->buildPath.$this->outputpath.'/report.xml"';
-
-        $cmd = 'cd "%s" && '.$testcafe.' '.$this->args.' '.$this->path;
         $this->phpci->log(
             'Testcafe cmd: '.$cmd,
             Loglevel::DEBUG

@@ -41,16 +41,17 @@ class BuildInterpolator
         //use standard path of php
         $this->interpolation_vars['%PHP%'] = 'php';
         if ($buildSettings != null) {
-
             //override global php path
             if (isset($buildSettings['php'])) {
                 $php = $buildSettings['php'];
                 $this->interpolation_vars['%PHP%'] = $php['path'];
             }
-            $builder->log('setupInterpolationVars PHP path '.print_r($buildSettings, true));
+
+           
 
         } else {
             $build->setLog('setupInterpolationVars Builder not found');
+
         }
 
 
@@ -91,6 +92,7 @@ class BuildInterpolator
         putenv('PHPCI_PROJECT_TITLE='.$this->interpolation_vars['%PROJECT_TITLE%']);
         putenv('PHPCI_BUILD_PATH='.$this->interpolation_vars['%BUILD_PATH%']);
         putenv('PHPCI_BUILD_URI='.$this->interpolation_vars['%BUILD_URI%']);
+        putenv('PHP='.$this->interpolation_vars['%PHP%']);
     }
 
     /**

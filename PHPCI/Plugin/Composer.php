@@ -29,6 +29,8 @@ class Composer implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
     protected $build;
     protected $nodev;
     protected $phpPath;
+    protected $version;
+    protected $branch;
 
     /**
      * Check if this plugin can be executed.
@@ -39,7 +41,7 @@ class Composer implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
      */
     public static function canExecute($stage, Builder $builder, Build $build)
     {
-        $path = $builder->buildPath.DIRECTORY_SEPARATOR.'composer.json';
+        $path = $builder->buildPath . DIRECTORY_SEPARATOR . 'composer.json';
 
         if (file_exists($path) && $stage == 'setup') {
             return true;
@@ -65,6 +67,8 @@ class Composer implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
         $this->preferSource = false;
         $this->nodev = false;
         $this->phpPath = null;
+        $this->version = "1";
+        $this->branch = $build->getBranch();
 
         $buildSettings = $phpci->getConfig('build_settings');
         if (isset($buildSettings['php'])) {
@@ -74,11 +78,17 @@ class Composer implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
 
 
         if (array_key_exists('directory', $options)) {
-            $this->directory = $path.DIRECTORY_SEPARATOR.$options['directory'];
+            $this->directory = $path . DIRECTORY_SEPARATOR . $options['directory'];
         }
 
-        if (array_key_exists('action', $options)) {
-            $this->action = $options['action'];
+        if (in_array($this->branch, ["master", "develop"])) {
+            $this->action = "update";
+        } else {
+            $this->action = "install";
+        }
+
+        if (array_key_exists('version', $options)) {
+            $this->version = $options['version'];
         }
 
         if (array_key_exists('prefer_dist', $options)) {
@@ -106,8 +116,11 @@ class Composer implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
      */
     public function execute()
     {
-        $composerLocation = $this->phpci->findBinary(array('composer', 'composer.phar'));
-
+        /*if ($this->version == "1") {
+            $composerLocation = $this->phpci->findBinary(array('composer', 'composer.phar'));
+        } else {*/
+            $composerLocation = $this->phpci->findBinary(array('composer2', 'composer2.phar'));
+        //}
         $cmd = '';
 
         if (IS_WIN) {
@@ -116,9 +129,19 @@ class Composer implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
         if ($this->phpPath == null) {
             $this->phpPath = 'php';
         }
-        $cmd = $this->phpPath.' -d memory_limit=-1 ';
+        $cmd = $this->phpPath . ' -d memory_limit=-1 ';
+        if($this->action == "update"){
+            if(file_exists($this->directory.DIRECTORY_SEPARATOR."composer-dev.json")){
+                $cmd = "COMPOSER=composer-dev.json ".$cmd;
+            }
+            else{
+                $this->phpci->log('composer-dev.json does not exist, using composer.json');
+            }
 
-        $cmd .= $composerLocation.' --no-ansi --no-interaction ';
+        }
+
+
+        $cmd .= $composerLocation . ' --no-ansi --no-interaction ';
 
         if ($this->preferDist) {
             $this->phpci->log('Using --prefer-dist flag');
@@ -136,7 +159,7 @@ class Composer implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
         }
 
         $cmd .= ' --working-dir="%s" %s';
-        $this->phpci->log('Running: '.sprintf($cmd, $this->directory, $this->action));
+        $this->phpci->log('Running (for branch ' . $this->branch . '): ' . sprintf($cmd, $this->directory, $this->action));
 
         return $this->phpci->executeCommand($cmd, $this->directory, $this->action);
     }

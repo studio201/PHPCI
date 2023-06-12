@@ -140,6 +140,7 @@ class Builder implements LoggerAwareInterface
         }
 
         $this->config = $config;
+
     }
 
     /**
@@ -305,22 +306,29 @@ class Builder implements LoggerAwareInterface
     protected function setupBuild()
     {
         $this->buildPath = $this->build->getBuildPath();
-
+        echo "Builder.setupBuild 1;";
         $this->interpolator->setupInterpolationVars(
             $this->build,
             $this->buildPath,
             PHPCI_URL,
-            $this, 
+            $this,
             $this->config['build_settings']
         );
-
+        echo "Builder.setupBuild 2;";
         $this->commandExecutor->setBuildPath($this->buildPath);
 
         // Create a working copy of the project:
         if (!$this->build->createWorkingCopy($this, $this->buildPath)) {
             throw new \Exception(Lang::get('could_not_create_working'));
         }
-
+        echo "Builder.setupBuild 3;";
+         $this->interpolator->setupInterpolationVars(
+            $this->build,
+            $this->buildPath,
+            PHPCI_URL,
+            $this,
+            $this->config['build_settings']
+        );
         // Does the project's phpci.yml request verbose mode?
         if (!isset($this->config['build_settings']['verbose']) || !$this->config['build_settings']['verbose']) {
             $this->verbose = false;
