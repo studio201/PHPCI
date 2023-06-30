@@ -306,13 +306,12 @@ class Builder implements LoggerAwareInterface
     protected function setupBuild()
     {
         $this->buildPath = $this->build->getBuildPath();
-        echo "Builder.setupBuild 1;";
+        echo "Builder.setupBuild 1;".$this->config;
         $this->interpolator->setupInterpolationVars(
             $this->build,
             $this->buildPath,
             PHPCI_URL,
-            $this,
-            $this->config['build_settings']
+            $this
         );
         echo "Builder.setupBuild 2;";
         $this->commandExecutor->setBuildPath($this->buildPath);
@@ -321,7 +320,7 @@ class Builder implements LoggerAwareInterface
         if (!$this->build->createWorkingCopy($this, $this->buildPath)) {
             throw new \Exception(Lang::get('could_not_create_working'));
         }
-        echo "Builder.setupBuild 3;";
+        echo "Builder.setupBuild 3;".print_r($this->config);
          $this->interpolator->setupInterpolationVars(
             $this->build,
             $this->buildPath,
