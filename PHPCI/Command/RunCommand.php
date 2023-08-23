@@ -159,7 +159,7 @@ class RunCommand extends Command
         $running = $store->getByStatus(1);
         $rtn = array();
 
-        $timeout = Config::getInstance()->get('phpci.build.failed_after', 1800);
+        $timeout = Config::getInstance()->get('phpci.build.failed_after', 10800);
 
         foreach ($running['items'] as $build) {
             /** @var \PHPCI\Model\Build $build */

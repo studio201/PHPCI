@@ -111,7 +111,7 @@ class Testcafe implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
     }
 
     /**
-     * Runs Codeception tests
+     * Runs Testcafe tests
      */
     public function execute()
     {
@@ -124,7 +124,7 @@ class Testcafe implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
     }
 
     /**
-     * Run tests from a Codeception config file.
+     * Run tests from a Testcafe config file.
      * @param $configPath
      * @return bool|mixed
      * @throws \Exception
@@ -133,7 +133,7 @@ class Testcafe implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
     {
         $this->phpci->logExecOutput($this->logging);
         if(file_exists($this->phpci->buildPath."testcafe.config.json") == false){
-            @copy($this->phpci->buildPath."codeception.config.json.dist", $this->phpci->buildPath."testcafe.config.json");
+            @copy($this->phpci->buildPath."testcafe.config.json.dist", $this->phpci->buildPath."testcafe.config.json");
         }
         $testcafe = $this->phpci->findBinary('testcafe');
 
@@ -146,7 +146,7 @@ class Testcafe implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
 
         if (is_dir($testcafePath) == false) {
             $this->phpci->log(
-                'Codeception mkdir('.$testcafePath.')',
+                'Testcafe mkdir('.$testcafePath.')',
                 Loglevel::DEBUG
             );
             mkdir($testcafePath, 0777, true);
@@ -173,18 +173,33 @@ class Testcafe implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
         );
 
         $xml = file_get_contents($this->phpci->buildPath.$this->outputpath.'report.xml', false);
+        $xml = str_replace('<?xml version="1.0" encoding="UTF-8" ?>', '<?xml version="1.0" encoding="UTF-8" ?><testsuites>',$xml)."</testsuites>";
         $parser = new Parser($this->phpci, $xml);
         $output = $parser->parse();
+        $this->phpci->log(
+            'Testcafe XML path: '.$this->phpci->buildPath.$this->outputpath.'report.xml: '.print_r($output, true)."; ".$xml
+        );
+
 
         $meta = array(
             'tests' => $parser->getTotalTests(),
             'timetaken' => $parser->getTotalTimeTaken(),
             'failures' => $parser->getTotalFailures(),
         );
+        $this->phpci->log(
+            'Testcafe tests: '.$parser->getTotalTests()
+        );
 
-        $this->build->storeMeta('codeception-meta', $meta);
-        $this->build->storeMeta('codeception-data', $output);
-        $this->build->storeMeta('codeception-errors', $parser->getTotalFailures());
+        $this->phpci->log(
+            'Testcafe time: '.$parser->getTotalTimeTaken()
+        );
+        $this->phpci->log(
+            'Testcafe failed tests: '.$parser->getTotalFailures()
+        );
+
+        $this->build->storeMeta('testcafe-meta', $meta);
+        $this->build->storeMeta('testcafe-data', $output);
+        $this->build->storeMeta('testcafe-errors', $parser->getTotalFailures());
         $this->phpci->logExecOutput(true);
 
         return $success;

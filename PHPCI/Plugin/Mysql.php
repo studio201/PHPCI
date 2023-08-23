@@ -67,10 +67,9 @@ class Mysql implements \PHPCI\Plugin
 
         $config = \b8\Database::getConnection('write')->getDetails();
 
-        $this->host =(defined('PHPCI_DB_HOST')) ? PHPCI_DB_HOST : null;
+        $this->host =(defined('PHPCI_DB_HOST')) ? PHPCI_DB_HOST : "127.0.0.1";
         $this->user = $config['user'];
         $this->pass = $config['pass'];
-
         $buildSettings = $phpci->getConfig('build_settings');
 
         if (!isset($buildSettings['mysql'])) {

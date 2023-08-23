@@ -44,7 +44,11 @@ class BuildInterpolator
             //override global php path
             if (isset($buildSettings['php'])) {
                 $php = $buildSettings['php'];
+                if(file_exists($php['path']) == false){
+                    $php['path'] = $builder->findBinary(array(basename($php['path'])));
+                }
                 $this->interpolation_vars['%PHP%'] = $php['path'];
+
             }
 
            

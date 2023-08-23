@@ -55,6 +55,8 @@ class PhpParallelLint implements \PHPCI\Plugin
      */
     protected $logging = false;
 
+    protected $phpPath;
+
     /**
      * Standard Constructor
      *
@@ -76,6 +78,13 @@ class PhpParallelLint implements \PHPCI\Plugin
         $this->ignore = $this->phpci->ignore;
         $this->extensions = 'php';
         $this->shortTag = false;
+        $this->phpPath = null;
+        $buildSettings = $phpci->getConfig('build_settings');
+        if (isset($buildSettings['php'])) {
+            $php = $buildSettings['php'];
+            $this->phpPath = $php['path'];
+        }
+
 
         if (isset($options['directory'])) {
             $this->directory = $phpci->buildPath.$options['directory'];
@@ -112,10 +121,13 @@ class PhpParallelLint implements \PHPCI\Plugin
         list($ignore) = $this->getFlags();
 
         $phplint = $this->phpci->findBinary('parallel-lint');
-
-        $cmd = $phplint.' -e %s'.'%s %s "%s"';
+        if ($this->phpPath == null) {
+            $this->phpPath = 'php';
+        }
+        $cmd = $phplint.' -p %s -e %s'.'%s %s "%s"';
         $success = $this->phpci->executeCommand(
             $cmd,
+            $this->phpPath,
             $this->extensions,
             ($this->shortTag ? ' -s' : ''),
             $ignore,

@@ -5,12 +5,9 @@ namespace PHPCI\Plugin\Util\TestResultParsers;
 use PHPCI\Builder;
 
 /**
- * Class Codeception
- *
- * @author  Adam Cooper <adam@networkpie.co.uk>
- * @package PHPCI\Plugin\Util\TestResultParsers
+ * Class Testcafe
  */
-class Codeception implements ParserInterface
+class Testcafe implements ParserInterface
 {
     protected $phpci;
     protected $resultsXml;
@@ -42,16 +39,8 @@ class Codeception implements ParserInterface
 
         $this->results = new \SimpleXMLElement($this->resultsXml);
 
-
-        $isTestcafeStructure = $this->results->attributes()["tests"][0]>0;
-        if($isTestcafeStructure){
-            $this->resultsXml = str_replace('<?xml version="1.0" encoding="UTF-8" ?>', '<?xml version="1.0" encoding="UTF-8" ?><testsuites>',$this->resultsXml)."</testsuites>";
-
-            $this->results = new \SimpleXMLElement($this->resultsXml);
-        }
-
         // calculate total results
-        foreach ($this->results as $testsuite) {
+        foreach ($this->results->testsuite as $testsuite) {
             $this->totalTests += (int) $testsuite['tests'];
             $this->totalTimeTaken += (float) $testsuite['time'];
             $this->totalFailures += (int) $testsuite['failures'];
@@ -69,9 +58,6 @@ class Codeception implements ParserInterface
 
                 if (isset($testcase['class'])) {
                     $testresult['class'] = (string) $testcase['class'];
-                }
-                if (isset($testcase['classname'])) {
-                    $testresult['class'] = (string) $testcase['classname'];
                 }
 
                 // PHPUnit testcases does not have feature field. Use class::method instead

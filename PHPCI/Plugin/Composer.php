@@ -74,6 +74,9 @@ class Composer implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
         if (isset($buildSettings['php'])) {
             $php = $buildSettings['php'];
             $this->phpPath = $php['path'];
+            if(file_exists($this->phpPath) == false){
+                $this->phpPath = $this->phpci->findBinary(array(basename($php['path'])));
+            }
         }
 
 

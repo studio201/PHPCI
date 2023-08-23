@@ -187,6 +187,7 @@ generiert. Um es zu verwenden, fügen Sie einfach den folgenden Public Key im Ab
     'issues' => 'Probleme',
 
     'codeception' => 'Codeception',
+    'testcafe' => 'Testcafe',
     'phpcpd' => 'PHP Copy/Paste Detector',
     'phpcs' => 'PHP Code Sniffer',
     'phpdoccheck' => 'Fehlende Docblocks',
