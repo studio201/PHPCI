@@ -173,7 +173,6 @@ class Testcafe implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
         );
 
         $xml = file_get_contents($this->phpci->buildPath.$this->outputpath.'report.xml', false);
-        $xml = str_replace('<?xml version="1.0" encoding="UTF-8" ?>', '<?xml version="1.0" encoding="UTF-8" ?><testsuites>',$xml)."</testsuites>";
         $parser = new Parser($this->phpci, $xml);
         $output = $parser->parse();
         $this->phpci->log(
