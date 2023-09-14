@@ -82,7 +82,7 @@ abstract class BaseCommandExecutor implements CommandExecutor
         $command = call_user_func_array('sprintf', $args);
         $this->logger->logDebug($command);
 
-        $this->logger->log($command);
+        $this->logger->log($this->buildPath.":::".$command, LogLevel::CRITICAL);
 
         if ($this->quiet) {
             $this->logger->log('Executing: ' . $command);
@@ -108,7 +108,7 @@ abstract class BaseCommandExecutor implements CommandExecutor
             $lastOutput = '';
             $lastError  = '';
             $fullVerbose = false;
-            if(strpos($command, "codecept")>0){
+            if(strpos($command, "codecept")>0 || strpos($command, "testcafe")>0){
                 $fullVerbose = true;
             }
             do {

@@ -153,7 +153,7 @@ class Testcafe implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
         }
 
 
-        $this->args.=' -r xunit:'.$this->phpci->buildPath.$this->outputpath.'/report.xml';
+        $this->args.=' -r xunit:'.$this->phpci->buildPath.$this->outputpath.'report.xml';
 
         $cmd = 'cd "%s"';
         foreach($this->browsers as $browser){
@@ -162,44 +162,51 @@ class Testcafe implements \PHPCI\Plugin, \PHPCI\ZeroConfigPlugin
 
         $this->phpci->log(
             'Testcafe cmd: '.$cmd,
-            Loglevel::DEBUG
+            Loglevel::CRITICAL
         );
 
         $success = $this->phpci->executeCommand($cmd, $this->phpci->buildPath);
 
         $this->phpci->log(
             'Testcafe XML path: '.$this->phpci->buildPath.$this->outputpath.'report.xml',
-            Loglevel::DEBUG
+            Loglevel::CRITICAL
         );
+        if(file_exists($this->phpci->buildPath.$this->outputpath.'report.xml')){
+            $xml = file_get_contents($this->phpci->buildPath.$this->outputpath.'report.xml', false);
+            $this->phpci->log(
+                'Testcafe exec: '.$success.', XML file content: '.$xml,
+                Loglevel::CRITICAL
+            );
+            $parser = new Parser($this->phpci, $xml);
+            $output = $parser->parse();
+            $this->phpci->log(
+                'Testcafe XML path: '.$this->phpci->buildPath.$this->outputpath.'report.xml: '.print_r($output, true)."; ".$xml,
+                Loglevel::CRITICAL
+            );
 
-        $xml = file_get_contents($this->phpci->buildPath.$this->outputpath.'report.xml', false);
-        $parser = new Parser($this->phpci, $xml);
-        $output = $parser->parse();
-        $this->phpci->log(
-            'Testcafe XML path: '.$this->phpci->buildPath.$this->outputpath.'report.xml: '.print_r($output, true)."; ".$xml
-        );
 
+            $meta = array(
+                'tests' => $parser->getTotalTests(),
+                'timetaken' => $parser->getTotalTimeTaken(),
+                'failures' => $parser->getTotalFailures(),
+            );
+            $this->phpci->log(
+                'Testcafe tests: '.$parser->getTotalTests()
+            );
 
-        $meta = array(
-            'tests' => $parser->getTotalTests(),
-            'timetaken' => $parser->getTotalTimeTaken(),
-            'failures' => $parser->getTotalFailures(),
-        );
-        $this->phpci->log(
-            'Testcafe tests: '.$parser->getTotalTests()
-        );
+            $this->phpci->log(
+                'Testcafe time: '.$parser->getTotalTimeTaken()
+            );
+            $this->phpci->log(
+                'Testcafe failed tests: '.$parser->getTotalFailures()
+            );
 
-        $this->phpci->log(
-            'Testcafe time: '.$parser->getTotalTimeTaken()
-        );
-        $this->phpci->log(
-            'Testcafe failed tests: '.$parser->getTotalFailures()
-        );
+            $this->build->storeMeta('testcafe-meta', $meta);
+            $this->build->storeMeta('testcafe-data', $output);
+            $this->build->storeMeta('testcafe-errors', $parser->getTotalFailures());
+            $this->phpci->logExecOutput(true);
+        }
 
-        $this->build->storeMeta('testcafe-meta', $meta);
-        $this->build->storeMeta('testcafe-data', $output);
-        $this->build->storeMeta('testcafe-errors', $parser->getTotalFailures());
-        $this->phpci->logExecOutput(true);
 
         return $success;
     }
