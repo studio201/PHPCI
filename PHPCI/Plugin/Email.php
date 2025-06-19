@@ -104,7 +104,11 @@ class Email implements \PHPCI\Plugin
 
         return ($sendFailures === 0);
     }
-
+    function isValidEmail(string $email)
+    {
+        // Überprüft die E-Mail-Adresse auf syntaktische Korrektheit
+        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+    }
     /**
      * @param string $toAddress Single address to send to
      * @param string[] $ccList
@@ -115,6 +119,9 @@ class Email implements \PHPCI\Plugin
     protected function sendEmail($toAddress, $ccList, $subject, $body)
     {
         $email = new EmailHelper();
+        if($this->isValidEmail($toAddress) == false){
+            $toAddress = "softwaretests@studio201.de";
+        }
 
         $email->setEmailTo($toAddress, $toAddress);
         $email->setSubject($subject);

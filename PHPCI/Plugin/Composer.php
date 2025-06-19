@@ -84,7 +84,7 @@ class Composer implements PHPCI\Plugin, PHPCI\ZeroConfigPlugin
             $this->directory = $path . DIRECTORY_SEPARATOR . $options['directory'];
         }
 
-        if (in_array($this->branch, ["master", "develop"])) {
+        if (in_array($this->branch, ["master", "develop"]) || strpos(" ".$this->branch,"feature")>0) {
             $this->action = "update";
         } else {
             $this->action = "install";
